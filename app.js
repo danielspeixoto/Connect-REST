@@ -1,11 +1,11 @@
-User = require('./model/user');
-
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 app.use(bodyParser.json());
+
+User = require('./model/user');
 
 // Connect to Mongoose
 mongoose.connect('mongodb://localhost/connect');
@@ -15,6 +15,9 @@ var db = mongoose.connection;
 app.get('/', function(req, res){
 	res.send('Please use /api/users');
 });
+
+app.listen(3000);
+console.log("online");
 
 app.get('/api/users', function(req, res) {
 	User.getUsers(function(err, users) {
