@@ -17,7 +17,7 @@ app.get('/', function(req, res){
 	res.send('Please use /api/users');
 });
 
-app.listen(3000);
+app.listen(4000);
 console.log("online");
 
 app.get('/api/users', function(req, res) {
@@ -52,4 +52,12 @@ app.delete('/api/users/:_id', function(req, res) {
 	User.removeUser(id, function(err, user) {
 		res.json(user);
 	});
+});
+
+// DELETE ALL USERS TEST ONLY
+app.delete('/api/users', function(req, res) {
+    var id = req.params._id;
+    User.removeAllUsers(id, function(err, user) {
+        res.json(user);
+    });
 });

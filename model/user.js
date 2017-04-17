@@ -17,6 +17,9 @@ const userSchema = mongoose.Schema({
     group: {
         type: String,
         required : true
+    },
+    permissions: {
+        type: Object
     }
 });
 
@@ -53,4 +56,9 @@ module.exports.updateUser = function(id, user, options, callback){
 module.exports.removeUser = function(id, callback){
 	var query = {_id: id};
 	User.remove(query, callback);
+}
+
+// DELETE ALL USERS TEST ONLYd
+module.exports.removeAllUsers = function(id, callback){
+    User.remove(callback);
 }
