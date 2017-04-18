@@ -1,29 +1,34 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const config = require('../config/database');
+const uniqueValidator = require('mongoose-unique-validator');
 
 // User Schema
 const UserSchema = mongoose.Schema({
 	name: {
         type: String,
-        required : true
+        required: true
     },
     username: {
         type: String,
-        required : true
+        required: true,
+		index: true,
+		unique: true
     },
     password: {
         type: String,
-        required : true
+        required: true
     },
     group: {
         type: String,
-        required : true
+        required: true
     },
     permissions: {
         type: Object
     }
 });
+
+UserSchema.plugin(uniqueValidator);
 
 const User = module.exports = mongoose.model('User', UserSchema);
 
