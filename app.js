@@ -1,63 +1,58 @@
-console.log("Testes");
 const express = require('express');
-const app = express();
+const path = require('path');
 const bodyParser = require('body-parser');
+const cors = require('cors');
+const passport = require('passport');
 const mongoose = require('mongoose');
+const config = require('./config/database');
 
+// Connect To Database
+mongoose.connect(config.database);
+
+// On Connection
+mongoose.connection.on('connected', () => {
+    console.log('Connected to database ' + config.database);
+});
+
+// On Error
+mongoose.connection.on('error', (err) => {
+    console.log('Database error: '+err);
+});
+
+const app = express();
+
+const users = require('./routes/users');
+
+// Port Number
+const port = process.env.PORT || 8080;
+
+// CORS Middleware
+app.use(cors());
+
+// Set Static Folder
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Body Parser Middleware
 app.use(bodyParser.json());
 
-User = require('./model/user');
+// Passport Middleware
+app.use(passport.initialize());
+app.use(passport.session());
 
-// Connect to Mongoose
-mongoose.connect('mongodb://localhost/connect');
-var db = mongoose.connection;
+require('./config/passport')(passport);
 
+app.use('/users', users);
 
-app.get('/', function(req, res){
-	res.send('Please use /api/users');
+// Index Route
+app.get('/', (req, res) => {
+    res.send('Invalid Endpoint');
 });
 
-app.listen(4000);
-console.log("online");
-
-app.get('/api/users', function(req, res) {
-	User.getUsers(function(err, users) {
-		res.json(users);
-	});
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
-app.get('/api/users/:_id', function(req, res) {
-	User.getUserById(req.params._id, function(err, user) {
-		res.json(user);
-	});
-});
-
-app.post('/api/users', function(req, res) {
-	var user = req.body;
-	User.addUser(user, function(err, user) {
-		res.json(user);
-	});
-});
-
-app.put('/api/users/:_id', function(req, res) {
-	var id = req.params._id;
-	var user = req.body;
-	User.updateUser(id, user, {}, function(err, user) {
-		res.json(user);
-	});
-});
-
-app.delete('/api/users/:_id', function(req, res) {
-	var id = req.params._id;
-	User.removeUser(id, function(err, user) {
-		res.json(user);
-	});
-});
-
-// DELETE ALL USERS TEST ONLY
-app.delete('/api/users', function(req, res) {
-    var id = req.params._id;
-    User.removeAllUsers(id, function(err, user) {
-        res.json(user);
-    });
+// Start Server
+app.listen(port, () => {
+    console.log('Server started on port '+port);
 });
