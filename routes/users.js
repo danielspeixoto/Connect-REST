@@ -21,6 +21,7 @@ router.post('/register', (req, res, next) => {
     });
 
     User.addUser(newUser, (err, user) => {
+        const password = user.password
         if(err){
             res.json({
                 success: false,
@@ -37,6 +38,7 @@ router.post('/register', (req, res, next) => {
                     id: user._id,
                     name: user.name,
                     username: user.username,
+                    password: password, // Password without hash
                     permissions: user.permissions,
                     group: user.group
 
@@ -48,7 +50,6 @@ router.post('/register', (req, res, next) => {
 
 // Authenticate
 router.post('/authenticate', (req, res, next) => {
-    console.log(req.body);
     const username = req.body.username;
     const password = req.body.password;
 
@@ -74,6 +75,7 @@ router.post('/authenticate', (req, res, next) => {
                         id: user._id,
                         name: user.name,
                         username: user.username,
+                        password: password, // Password without hash
                         permissions: user.permissions,
                         group: user.group
 
