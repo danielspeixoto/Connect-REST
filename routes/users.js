@@ -32,9 +32,8 @@ router.post('/register', (req, res, next) => {
                 expiresIn: 604800 // 1 week
             });
             res.json({
-                success: true,
-                token: 'JWT '+ token,
                 user: {
+                    token: 'JWT '+ token,
                     id: user._id,
                     name: user.name,
                     username: user.username,

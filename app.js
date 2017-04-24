@@ -22,6 +22,7 @@ mongoose.connection.on('error', (err) => {
 const app = express();
 
 const users = require('./routes/users');
+const visitors = require('./routes/visitors')
 
 // Port Number
 const port = process.env.PORT || 8080;
@@ -42,6 +43,7 @@ app.use(passport.session());
 require('./config/passport')(passport);
 
 app.use('/users', users);
+app.use('/visitors', visitors);
 
 // Index Route
 app.get('/', (req, res) => {
@@ -54,5 +56,5 @@ app.get('*', (req, res) => {
 
 // Start Server
 app.listen(port, () => {
-    console.log('Server started on port '+port);
+    console.log('Server started on port '+ port);
 });

@@ -3,6 +3,7 @@
  */
 
 const mongoose = require('mongoose');
+const User = require('./user')
 
 // Visitor Schema
 const visitorSchema = mongoose.Schema({
@@ -20,16 +21,17 @@ const visitorSchema = mongoose.Schema({
         type: Number
     },
     activities: {
-
+        type: Object
     },
     observers: {
+        type: Object
     }
 });
 
 const Visitor = module.exports = mongoose.model('Visitor', visitorSchema);
 
 // Get Visitors
-module.exports.getVisitors = function(callback, limit) {
+module.exports.getVisitors = function(callback, group, limit) {
     Visitor.find(callback).limit(limit);
 }
 
@@ -39,8 +41,14 @@ module.exports.getVisitorById = function(id, callback){
 }
 
 // Add Visitor
-module.exports.addVisitor = function(visitor, callback) {
-    Visitor.create(visitor, callback);
+module.exports.addVisitor = function(visitor, group, callback) {
+    User.getUserByUsername("danielspeixoto" ,(err, user) => {
+        console.log(user + '\n \n \n')
+        user.children.create(visitor)
+    })
+    // var i = mongoose.model('Group')
+    // var mg = new i({name : group})
+    // mg.children.create(visitor);
 }
 
 // Update Visitor
