@@ -3,13 +3,37 @@
  */
 
 const mongoose = require('mongoose');
+require('./visitor')
+
+const visitorSchema = mongoose.Schema({
+    name: {
+        type: String,
+        required : true
+    },
+    observations: {
+        type: String
+    },
+    phone: {
+        type: Number
+    },
+    age: {
+        type: Number
+    },
+    activities: {
+        type: Object
+    },
+    observers: {
+        type: Object
+    }
+});
 
 // Group Schema
 const groupSchema = mongoose.Schema({
     name: {
         type: String,
         required : true
-    }
+    },
+    children: [visitorSchema]
 });
 
 const Group = module.exports = mongoose.model('Group', groupSchema);
