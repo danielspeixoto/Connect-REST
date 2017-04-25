@@ -9,20 +9,20 @@ const config = require('../config/database');
 const User = require('../models/user');
 
 // Register ADM
-router.post('/register', (req, res, next) => {
+router.post('/', (req, res, next) => {
     let newUser = new User({
         name: req.body.name,
         group: req.body.username,
-        username: req.body.username,
+        _id: req.body.username,
         password: req.body.password,
-        permissions: {
-            "MANAGE_USERS": true
-        },
+        permissions: [
+            "MANAGE_USERS",
+            "ORGANIZE WORK"
+        ],
     });
-
     User.addUser(newUser, (err, user) => {
-        const password = user.password
         if(err){
+            console.log(err.message);
             res.json({
                 success: false,
                 msg: "Algum erro ocorreu"
@@ -36,11 +36,9 @@ router.post('/register', (req, res, next) => {
                     token: 'JWT '+ token,
                     id: user._id,
                     name: user.name,
-                    username: user.username,
-                    password: password, // Password without hash
+                    username: user._id,
                     permissions: user.permissions,
                     group: user.group
-
                 }
             });
         }
@@ -48,11 +46,11 @@ router.post('/register', (req, res, next) => {
 });
 
 // Authenticate
-router.post('/authenticate', (req, res, next) => {
+router.post('/login', (req, res, next) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    User.getUserByUsername(username, (err, user) => {
+    User.getUserById(username, (err, user) => {
         if(err) throw err;
         if(!user){
             return res.json({
@@ -89,7 +87,7 @@ router.post('/authenticate', (req, res, next) => {
     });
 });
 
-router.get('/get-all', (req, res) => {
+router.get('/', (req, res) => {
     User.getUsers(function(err, users) {
         res.json(users);
     });

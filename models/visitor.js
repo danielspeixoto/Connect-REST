@@ -1,10 +1,7 @@
 /**
  * Created by daniel on 15/04/17.
  */
-
 const mongoose = require('mongoose');
-const User = require('./user')
-const Group = require('./group')
 
 // Visitor Schema
 const visitorSchema = mongoose.Schema({
@@ -22,7 +19,7 @@ const visitorSchema = mongoose.Schema({
         type: Number
     },
     activities: {
-        type: Object
+        type: [String]
     },
     observers: {
         type: Object
@@ -30,28 +27,35 @@ const visitorSchema = mongoose.Schema({
 });
 
 const Visitor = module.exports = mongoose.model('Visitor', visitorSchema);
+module.exports.visitorSchema = visitorSchema;
+
+const Group = require('./group');
 
 // Get Visitors
-module.exports.getVisitors = function(callback, group, limit) {
-    Visitor.find(callback).limit(limit);
-}
+//TODO Check if it is not retrieving users also
+module.exports.getVisitors = function(groupName, callback) {
+    Group.findById(groupName).populate("visitor", "name").exec(callback)
+};
 
 // Get Visitor
 module.exports.getVisitorById = function(id, callback){
     Visitor.findById(id, callback);
-}
+};
+
 
 // Add Visitor
-module.exports.addVisitor = function(visitor, group, callback) {
-    // User.getUserByUsername("danielspeixoto" ,(err, user) => {
-    //     console.log(user + '\n \n \n')
-    //     user.children.create(visitor)
-    // })
-    var i = mongoose.model('Group')
-    var mg = new i({name : group, children: [visitor]})
-    mg.save(callback)
-    //mg.children.create(visitor);
-}
+module.exports.addVisitor = function(visitor, groupName, callback) {
+    Group.getGroupById(groupName, (err, group) => {
+        if(err) throw err;
+        if(group === null) {
+            group = Group({
+                _id : groupName
+            });
+        }
+        group.visitors.push(visitor);
+        group.save(callback)
+    })
+};
 
 // Update Visitor
 module.exports.updateVisitor = function(id, visitor, options, callback){
@@ -63,13 +67,13 @@ module.exports.updateVisitor = function(id, visitor, options, callback){
         age : visitor.age,
         activities: visitor.activities,
         observers: visitor.observers
-    }
+    };
     Visitor.findOneAndUpdate(query, update, options, callback);
-}
+};
 
 // Delete Visitor
 module.exports.removeVisitor = function(id, callback){
     var query = {_id: id};
     Visitor.remove(query, callback);
-}
+};
 

@@ -4,16 +4,13 @@ const config = require('../config/database');
 const uniqueValidator = require('mongoose-unique-validator');
 
 // User Schema
-const UserSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema({
 	name: {
         type: String,
         required: true
     },
-    username: {
-        type: String,
-        required: true,
-		index: true,
-		unique: true
+    _id: { //username
+        type: String
     },
     password: {
         type: String,
@@ -24,13 +21,12 @@ const UserSchema = mongoose.Schema({
         required: true
     },
     permissions: {
-        type: Object
+        type: [String]
     }
 });
 
-UserSchema.plugin(uniqueValidator);
-
-const User = module.exports = mongoose.model('User', UserSchema);
+const User = module.exports = mongoose.model('User', userSchema);
+module.exports.userSchema = userSchema;
 
 module.exports.getUserById = function(id, callback){
     User.findById(id, callback);
@@ -41,12 +37,12 @@ module.exports.getUserByUsername = function(username, callback){
     User.findOne(query, callback);
 }
 
-module.exports.addUser = function(newUser, callback){
+module.exports.addUser = function(user, callback){
     bcrypt.genSalt(10, (err, salt) => {
-        bcrypt.hash(newUser.password, salt, (err, hash) => {
+        bcrypt.hash(user.password, salt, (err, hash) => {
             if(err) throw err;
-            newUser.password = hash;
-            newUser.save(callback);
+            user.password = hash;
+            user.save(callback);
         });
     });
 }

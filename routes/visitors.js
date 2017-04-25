@@ -17,8 +17,10 @@ router.post('/:group', (req, res, next) => {
         age: req.body.age
     });
 
-    Visitor.addVisitor(newVisitor, req.param('group'), (err, visitor) => {
+    Visitor.addVisitor(newVisitor, req.params.group, (err, group) => {
+        let visitor = group.visitors[0];
         if(err){
+            console.log(err.message)
             res.json({
                 success: false,
                 msg: "Algum erro ocorreu"
@@ -39,9 +41,9 @@ router.post('/:group', (req, res, next) => {
 
 // Get all visitors
 router.get('/:group', (req, res) => {
-    Visitor.getVisitors(function(err, visitors) {
-        res.json(visitors);
+    Visitor.getVisitors(req.params.group, function(err, group) {
+        res.json(group.visitors);
     });
-})
+});
 
 module.exports = router;
