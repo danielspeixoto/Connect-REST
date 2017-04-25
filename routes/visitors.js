@@ -18,7 +18,7 @@ router.post('/:group', (req, res, next) => {
     });
 
     Visitor.addVisitor(newVisitor, req.params.group, (err, group) => {
-        let visitor = group.visitors[0];
+        let visitor = group.visitors;
         if(err){
             console.log(err.message)
             res.json({
@@ -42,7 +42,17 @@ router.post('/:group', (req, res, next) => {
 // Get all visitors
 router.get('/:group', (req, res) => {
     Visitor.getVisitors(req.params.group, function(err, group) {
-        res.json(group.visitors);
+        if(err) {
+            console.log(err.message)
+            res.json({
+                success: false,
+                msg: "Algum erro ocorreu"
+            });
+        } else if(group === null) {
+            res.json([]);
+        } else {
+            res.json(group);
+        }
     });
 });
 

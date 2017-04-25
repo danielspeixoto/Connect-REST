@@ -34,14 +34,13 @@ const Group = require('./group');
 // Get Visitors
 //TODO Check if it is not retrieving users also
 module.exports.getVisitors = function(groupName, callback) {
-    Group.findById(groupName).populate("visitor", "name").exec(callback)
+    Group.findById(groupName).populate("visitor", "visitor/name").exec(callback)
 };
 
 // Get Visitor
 module.exports.getVisitorById = function(id, callback){
     Visitor.findById(id, callback);
 };
-
 
 // Add Visitor
 module.exports.addVisitor = function(visitor, groupName, callback) {
@@ -52,6 +51,7 @@ module.exports.addVisitor = function(visitor, groupName, callback) {
                 _id : groupName
             });
         }
+        group.visitors.create(visitor)
         group.visitors.push(visitor);
         group.save(callback)
     })

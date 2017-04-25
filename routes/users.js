@@ -15,10 +15,10 @@ router.post('/', (req, res, next) => {
         group: req.body.username,
         _id: req.body.username,
         password: req.body.password,
-        permissions: [
-            "MANAGE_USERS",
-            "ORGANIZE WORK"
-        ],
+        permissions: {
+            manageUsers: true,
+            organizeWork: true
+        },
     });
     User.addUser(newUser, (err, user) => {
         if(err){

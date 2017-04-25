@@ -21,7 +21,8 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     permissions: {
-        type: [String]
+        manageUsers: Boolean,
+        organizeWork: Boolean
     }
 });
 
