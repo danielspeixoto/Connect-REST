@@ -11,9 +11,9 @@ const User = require('../models/user');
 // Register ADM
 router.post('/', (req, res, next) => {
     let newUser = new User({
+        _id: req.body._id,
         name: req.body.name,
-        group: req.body.username,
-        _id: req.body.username,
+        group: req.body._id,
         password: req.body.password,
         permissions: {
             manageUsers: true,
@@ -23,67 +23,52 @@ router.post('/', (req, res, next) => {
     User.addUser(newUser, (err, user) => {
         if(err){
             console.log(err.message);
-            res.json({
-                success: false,
-                msg: "Algum erro ocorreu"
-            });
+            res.sendStatus(500)
         } else {
             const token = jwt.sign(user, config.secret, {
                 expiresIn: 604800 // 1 week
             });
             res.json({
-                user: {
-                    token: 'JWT '+ token,
-                    id: user._id,
-                    name: user.name,
-                    username: user._id,
-                    permissions: user.permissions,
-                    group: user.group
-                }
+                token: 'JWT '+ token,
+                _id: user._id,
+                name: user.name,
+                password: req.body.password,
+                permissions: user.permissions,
+                group: user.group
             });
         }
     });
 });
 
 // Authenticate
-router.post('/login', (req, res, next) => {
-    const username = req.body.username;
+router.put('/login', (req, res, next) => {
+    const _id = req.body._id;
     const password = req.body.password;
 
-    User.getUserById(username, (err, user) => {
+    User.getUserById(_id, (err, user) => {
         if(err) throw err;
         if(!user){
-            return res.json({
-                success: false, msg: 'Usuário ou senha incorretos'
-            });
-        }
-
-        User.comparePassword(password, user.password, (err, isMatch) => {
-            if(err) throw err;
-            if(isMatch){
-                const token = jwt.sign(user, config.secret, {
-                    expiresIn: 604800 // 1 week
-                });
-
-                res.json({
-                    success: true,
-                    token: 'JWT '+ token,
-                    user: {
-                        id: user._id,
+            res.sendStatus(404)
+        } else {
+            User.comparePassword(password, user.password, (err, isMatch) => {
+                if(err) throw err;
+                if(isMatch){
+                    const token = jwt.sign(user, config.secret, {
+                        expiresIn: 604800 // 1 week
+                    });
+                    res.json({
+                        token: 'JWT '+ token,
+                        _id: user._id,
                         name: user.name,
-                        username: user.username,
                         password: password, // Password without hash
                         permissions: user.permissions,
                         group: user.group
-
-                    }
-                });
-            } else {
-                return res.json({
-                    success: false, msg: 'Usuário ou senha incorretos'
-                });
-            }
-        });
+                    });
+                } else {
+                    res.sendStatus(404)
+                }
+            });
+        }
     });
 });
 
