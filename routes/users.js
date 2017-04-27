@@ -11,9 +11,9 @@ const User = require('../models/user');
 // Register ADM
 router.post('/', (req, res, next) => {
     let newUser = new User({
-        _id: req.body._id,
+        _id: req.body.username,
         name: req.body.name,
-        group: req.body._id,
+        group: req.body.username,
         password: req.body.password,
         permissions: {
             manageUsers: true,
@@ -30,7 +30,7 @@ router.post('/', (req, res, next) => {
             });
             res.json({
                 token: 'JWT '+ token,
-                _id: user._id,
+                username: user._id,
                 name: user.name,
                 password: req.body.password,
                 permissions: user.permissions,
@@ -41,8 +41,8 @@ router.post('/', (req, res, next) => {
 });
 
 // Authenticate
-router.put('/login', (req, res, next) => {
-    const _id = req.body._id;
+router.post('/login', (req, res, next) => {
+    const _id = req.body.username;
     const password = req.body.password;
 
     User.getUserById(_id, (err, user) => {
@@ -58,7 +58,7 @@ router.put('/login', (req, res, next) => {
                     });
                     res.json({
                         token: 'JWT '+ token,
-                        _id: user._id,
+                        username: user._id,
                         name: user.name,
                         password: password, // Password without hash
                         permissions: user.permissions,

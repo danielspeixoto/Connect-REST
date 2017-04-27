@@ -9,7 +9,7 @@ const config = require('../config/database');
 const Visitor = require('../models/visitor');
 
 // Register Visitor
-router.post('/:group', (req, res, next) => {
+router.post('/:group', passport.authenticate('jwt', {session:false}), (req, res, next) => {
     let newVisitor = new Visitor({
         name: req.body.name,
         observations: req.body.observations,
@@ -51,7 +51,7 @@ router.get('/:group', (req, res) => {
         } else if(group === null) {
             res.json([]);
         } else {
-            res.json(group);
+            res.json(group.visitors);
         }
     });
 });
