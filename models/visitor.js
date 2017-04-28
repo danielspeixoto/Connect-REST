@@ -22,7 +22,12 @@ const visitorSchema = mongoose.Schema({
         type: [String]
     },
     observers: {
-        type: Object
+        type: [String]
+    },
+    isIntegrated: {
+        type: Boolean,
+        required: true,
+        default: false
     }
 });
 
