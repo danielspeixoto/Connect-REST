@@ -14,10 +14,11 @@ router.post('/:group', passport.authenticate('jwt', {session:false}), (req, res,
         name: req.body.name,
         observations: req.body.observations,
         phone: req.body.phone,
-        age: req.body.age
+        age: req.body.age,
+        group: req.params.group
     });
 
-    Visitor.addVisitor(newVisitor, req.params.group, (err, group) => {
+    Visitor.addVisitor(newVisitor, (err, group) => {
         let visitor = group.visitors;
         if(err){
             console.log(err.message)
@@ -32,7 +33,8 @@ router.post('/:group', passport.authenticate('jwt', {session:false}), (req, res,
                     name: visitor.name,
                     observations: visitor.observations,
                     phone: visitor.phone,
-                    age: visitor.age
+                    age: visitor.age,
+                    isConnected: visitor.isConnected
                 }
             });
         }
@@ -51,7 +53,7 @@ router.get('/:group', (req, res) => {
         } else if(group === null) {
             res.json([]);
         } else {
-            res.json(group.visitors);
+            res.json(group);
         }
     });
 });

@@ -15,6 +15,10 @@ const visitorSchema = mongoose.Schema({
     phone: {
         type: Number
     },
+    group: {
+        type: String,
+        required: true
+    },
     age: {
         type: Number
     },
@@ -24,7 +28,7 @@ const visitorSchema = mongoose.Schema({
     observers: {
         type: [String]
     },
-    isIntegrated: {
+    isConnected: {
         type: Boolean,
         required: true,
         default: false
@@ -34,12 +38,10 @@ const visitorSchema = mongoose.Schema({
 const Visitor = module.exports = mongoose.model('Visitor', visitorSchema);
 module.exports.visitorSchema = visitorSchema;
 
-const Group = require('./group');
 
 // Get Visitors
-//TODO Check if it is not retrieving users also
 module.exports.getVisitors = function(groupName, callback) {
-    Group.findById(groupName).populate("visitor", "visitor/name").exec(callback)
+    Visitor.find({group: groupName}, callback)
 };
 
 // Get Visitor
@@ -49,17 +51,6 @@ module.exports.getVisitorById = function(id, callback){
 
 // Add Visitor
 module.exports.addVisitor = function(visitor, groupName, callback) {
-    Group.getGroupById(groupName, (err, group) => {
-        if(err) throw err;
-        if(group === null) {
-            group = Group({
-                _id : groupName
-            });
-        }
-        group.visitors.create(visitor)
-        group.visitors.push(visitor);
-        group.save(callback)
-    })
 };
 
 // Update Visitor
@@ -71,9 +62,15 @@ module.exports.updateVisitor = function(id, visitor, options, callback){
         phone : visitor.phone,
         age : visitor.age,
         activities: visitor.activities,
-        observers: visitor.observers
+        observers: visitor.observers,
+        isConnected: visitor.isConnected
     };
     Visitor.findOneAndUpdate(query, update, options, callback);
+};
+
+// Toggle Connected
+module.exports.addVisitor = function(visitor, groupName, callback) {
+
 };
 
 // Delete Visitor
