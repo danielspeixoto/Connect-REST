@@ -70,3 +70,11 @@ module.exports.removeVisitor = function(id, callback){
     Visitor.remove(query, callback);
 };
 
+module.exports.addActivity = function(id, activity, callback){
+    Visitor.findById(id, (err, visitor) => {
+        if(err) throw err
+        console.log(activity)
+        visitor.activities.push(activity)
+        visitor.save(callback)
+    });
+};

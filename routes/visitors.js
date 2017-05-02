@@ -49,7 +49,7 @@ router.get('/:group', (req, res) => {
     });
 });
 
-router.put("/isConnected/:id", (req, res) => {
+router.put("/:id/isConnected", (req, res) => {
     Visitor.toggleConected(req.params.id, req.body.isConnected, function(err, visitor) {
         if(err) {
             console.log(err.message)
@@ -59,5 +59,18 @@ router.put("/isConnected/:id", (req, res) => {
         }
     });
 });
+
+router.post("/:id/activities", (req, res) => {
+    console.log(req.body)
+    Visitor.addActivity(req.params.id, req.body.activity, function(err, visitor) {
+        if(err) {
+            console.log(err.message)
+            res.sendStatus(500)
+        } else {
+            res.json(visitor);
+        }
+    });
+});
+
 
 module.exports = router;
