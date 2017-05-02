@@ -50,27 +50,18 @@ module.exports.getVisitorById = function(id, callback){
 };
 
 // Add Visitor
-module.exports.addVisitor = function(visitor, groupName, callback) {
+module.exports.addVisitor = function(visitor, callback) {
+    visitor.save(callback)
 };
 
 // Update Visitor
 module.exports.updateVisitor = function(id, visitor, options, callback){
-    var query = {_id: id};
-    var update = {
-        name : visitor.name,
-        observations : visitor.observations,
-        phone : visitor.phone,
-        age : visitor.age,
-        activities: visitor.activities,
-        observers: visitor.observers,
-        isConnected: visitor.isConnected
-    };
-    Visitor.findOneAndUpdate(query, update, options, callback);
+    Visitor.findOneAndUpdate({_id: id}, visitor, options, callback);
 };
 
 // Toggle Connected
-module.exports.addVisitor = function(visitor, groupName, callback) {
-
+module.exports.toggleConected = function(id, isConnected, callback) {
+    Visitor.findOneAndUpdate({_id : id}, {isConnected : !isConnected}, callback)
 };
 
 // Delete Visitor

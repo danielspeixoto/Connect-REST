@@ -18,14 +18,10 @@ router.post('/:group', passport.authenticate('jwt', {session:false}), (req, res,
         group: req.params.group
     });
 
-    Visitor.addVisitor(newVisitor, (err, group) => {
-        let visitor = group.visitors;
+    Visitor.addVisitor(newVisitor, (err, visitor) => {
         if(err){
             console.log(err.message)
-            res.json({
-                success: false,
-                msg: "Algum erro ocorreu"
-            });
+            res.sendStatus(500)
         } else {
             res.json({
                 visitor: {
@@ -43,17 +39,23 @@ router.post('/:group', passport.authenticate('jwt', {session:false}), (req, res,
 
 // Get all visitors
 router.get('/:group', (req, res) => {
-    Visitor.getVisitors(req.params.group, function(err, group) {
+    Visitor.getVisitors(req.params.group, function(err, visitors) {
         if(err) {
             console.log(err.message)
-            res.json({
-                success: false,
-                msg: "Algum erro ocorreu"
-            });
-        } else if(group === null) {
-            res.json([]);
+            res.sendStatus(500)
         } else {
-            res.json(group);
+            res.json(visitors);
+        }
+    });
+});
+
+router.put("/isConnected/:id", (req, res) => {
+    Visitor.toggleConected(req.params.id, req.body.isConnected, function(err, visitor) {
+        if(err) {
+            console.log(err.message)
+            res.sendStatus(500)
+        } else {
+            res.json(visitor);
         }
     });
 });
