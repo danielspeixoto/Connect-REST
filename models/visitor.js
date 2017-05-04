@@ -26,7 +26,10 @@ const visitorSchema = mongoose.Schema({
         type: [String]
     },
     observers: {
-        type: [String]
+        type: [{
+            type: String,
+            ref: 'User'
+        }]
     },
     isConnected: {
         type: Boolean,
@@ -80,6 +83,11 @@ module.exports.addActivity = function(id, activity, callback){
         visitor.activities.push(activity)
         visitor.save(callback)
     });
+};
+
+// Get observers
+module.exports.retrieveObservers = function(id, callback) {
+    Visitor.findOne({_id: id}).populate("observers").exec(callback);
 };
 
 module.exports.addObserver = function(id, observer, callback){

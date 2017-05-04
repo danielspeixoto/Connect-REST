@@ -61,6 +61,17 @@ router.get('/', (req, res) => {
     });
 });
 
+router.get("/:id/observers", (req, res) => {
+    Visitor.retrieveObservers(req.params.id, function(err, visitor) {
+        if(err) {
+            console.log(err.message)
+            res.sendStatus(500)
+        } else {
+            res.json(visitor.observers);
+        }
+    });
+});
+
 router.put("/:id/isConnected", (req, res) => {
     Visitor.toggleConected(req.params.id, req.body.isConnected, function(err, visitor) {
         if(err) {
@@ -73,7 +84,6 @@ router.put("/:id/isConnected", (req, res) => {
 });
 
 router.put("/:id/activities", (req, res) => {
-    console.log(req.body)
     Visitor.addActivity(req.params.id, req.body.activity, function(err, visitor) {
         if(err) {
             console.log(err.message)
@@ -85,7 +95,6 @@ router.put("/:id/activities", (req, res) => {
 });
 
 router.put("/:id/observers", (req, res) => {
-    console.log(req.body)
     Visitor.addObserver(req.params.id, req.body.username, function(err, visitor) {
         if(err) {
             console.log(err.message)
