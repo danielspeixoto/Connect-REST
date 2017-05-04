@@ -50,6 +50,6 @@ module.exports.comparePassword = function(candidatePassword, hash, callback){
     });
 }
 
-module.exports.getUsers = function(callback, limit) {
-    User.find(callback).limit(limit);
-}
+module.exports.getUsers = function(groupName, callback) {
+    User.find({group: groupName}, callback)
+};

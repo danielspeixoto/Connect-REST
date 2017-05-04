@@ -9,13 +9,13 @@ const config = require('../config/database');
 const Visitor = require('../models/visitor');
 
 // Register Visitor
-router.post('/:group', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+router.post('/', passport.authenticate('jwt', {session:false}), (req, res, next) => {
     let newVisitor = new Visitor({
         name: req.body.name,
         observations: req.body.observations,
         phone: req.body.phone,
         age: req.body.age,
-        group: req.params.group
+        group: req.query.group
     });
 
     Visitor.addVisitor(newVisitor, (err, visitor) => {
@@ -38,8 +38,20 @@ router.post('/:group', passport.authenticate('jwt', {session:false}), (req, res,
 });
 
 // Get all visitors
-router.get('/:group', (req, res) => {
-    Visitor.getVisitors(req.params.group, function(err, visitors) {
+router.get('/', (req, res) => {
+    Visitor.getVisitors(req.query.group, function(err, visitors) {
+        if(err) {
+            console.log(err.message)
+            res.sendStatus(500)
+        } else {
+            res.json(visitors);
+        }
+    });
+});
+
+// Get visitors of a user
+router.get('/', (req, res) => {
+    Visitor.getVisitors(req.query, function(err, visitors) {
         if(err) {
             console.log(err.message)
             res.sendStatus(500)
@@ -60,9 +72,21 @@ router.put("/:id/isConnected", (req, res) => {
     });
 });
 
-router.post("/:id/activities", (req, res) => {
+router.put("/:id/activities", (req, res) => {
     console.log(req.body)
     Visitor.addActivity(req.params.id, req.body.activity, function(err, visitor) {
+        if(err) {
+            console.log(err.message)
+            res.sendStatus(500)
+        } else {
+            res.json(visitor);
+        }
+    });
+});
+
+router.put("/:id/observers", (req, res) => {
+    console.log(req.body)
+    Visitor.addObserver(req.params.id, req.body.username, function(err, visitor) {
         if(err) {
             console.log(err.message)
             res.sendStatus(500)

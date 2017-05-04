@@ -40,8 +40,37 @@ router.post('/', (req, res, next) => {
     });
 });
 
+// Register worker
+router.post('/:group', (req, res, next) => {
+    let newUser = new User({
+        _id: req.body.username,
+        name: req.body.name,
+        group: req.params.group,
+        password: req.body.password,
+        permissions: req.body.permissions
+    });
+    User.addUser(newUser, (err, user) => {
+        if(err){
+            console.log(err.message);
+            res.sendStatus(500)
+        } else {
+            const token = jwt.sign(user, config.secret, {
+                expiresIn: 604800 // 1 week
+            });
+            res.json({
+                token: 'JWT '+ token,
+                username: user._id,
+                name: user.name,
+                password: req.body.password,
+                permissions: user.permissions,
+                group: user.group
+            });
+        }
+    });
+});
+
 // Authenticate
-router.post('/login', (req, res, next) => {
+router.post('/login', (req, res) => {
     const _id = req.body.username;
     const password = req.body.password;
 
@@ -68,6 +97,18 @@ router.post('/login', (req, res, next) => {
                     res.sendStatus(404)
                 }
             });
+        }
+    });
+});
+
+// Get ALL group users
+router.get('/:group', (req, res, next) => {
+    User.getUsers(req.params.group, function(err, users) {
+        if(err) {
+            console.log(err.message)
+            res.sendStatus(500)
+        } else {
+            res.json(users);
         }
     });
 });

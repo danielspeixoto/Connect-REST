@@ -44,8 +44,13 @@ module.exports.getVisitors = function(groupName, callback) {
     Visitor.find({group: groupName}, callback)
 };
 
+// Get Visitors of a user
+module.exports.getMyVisitors = function(array, callback) {
+    Visitor.find({$and: [{group: array.group} ,{"observers": array.user}]}, callback)
+};
+
 // Get Visitor
-module.exports.getVisitorById = function(id, callback){
+module.exports.getVisitorById = function(id, callback) {
     Visitor.findById(id, callback);
 };
 
@@ -65,16 +70,22 @@ module.exports.toggleConected = function(id, isConnected, callback) {
 };
 
 // Delete Visitor
-module.exports.removeVisitor = function(id, callback){
-    var query = {_id: id};
-    Visitor.remove(query, callback);
+module.exports.removeVisitor = function(id, callback) {
+    Visitor.remove({_id: id}, callback);
 };
 
 module.exports.addActivity = function(id, activity, callback){
     Visitor.findById(id, (err, visitor) => {
         if(err) throw err
-        console.log(activity)
         visitor.activities.push(activity)
+        visitor.save(callback)
+    });
+};
+
+module.exports.addObserver = function(id, observer, callback){
+    Visitor.findById(id, (err, visitor) => {
+        if(err) throw err
+        visitor.observers.push(observer)
         visitor.save(callback)
     });
 };
