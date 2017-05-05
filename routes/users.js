@@ -42,6 +42,7 @@ router.post("/", (req, res, next) => {
 
 // Register worker
 router.post("/:group", (req, res, next) => {
+    console.log(req.body)
     let newUser = new User({
         _id: req.body._id,
         name: req.body.name,
@@ -58,7 +59,6 @@ router.post("/:group", (req, res, next) => {
                 expiresIn: 604800 // 1 week
             })
             res.json({
-                token: "JWT " + token,
                 _id: user._id,
                 name: user.name,
                 password: req.body.password,
