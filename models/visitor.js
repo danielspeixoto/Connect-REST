@@ -43,13 +43,8 @@ module.exports.visitorSchema = visitorSchema;
 
 
 // Get Visitors
-module.exports.getVisitors = function(groupName, callback) {
-    Visitor.find({group: groupName}, callback)
-};
-
-// Get Visitors of a user
-module.exports.getMyVisitors = function(array, callback) {
-    Visitor.find({$and: [{group: array.group} ,{"observers": array.user}]}, callback)
+module.exports.getVisitors = function(query, callback) {
+    Visitor.find({$and: [{isConnected: query.isConnected}, {group: query.group}]}, callback)
 };
 
 // Get Visitor

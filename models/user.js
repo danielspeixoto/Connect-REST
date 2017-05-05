@@ -23,6 +23,12 @@ const userSchema = new mongoose.Schema({
     permissions: {
         manageUsers: Boolean,
         organizeWork: Boolean
+    },
+    visitors: {
+        type: [{
+            type: String,
+            ref: 'Visitor'
+        }]
     }
 });
 
@@ -53,3 +59,24 @@ module.exports.comparePassword = function(candidatePassword, hash, callback){
 module.exports.getUsers = function(groupName, callback) {
     User.find({group: groupName}, callback)
 };
+
+module.exports.getUsers = function(id, callback) {
+    User.findOne({_id: id}).populate("visitors").exec(callback)
+};
+
+module.exports.addVisitor = function(id, visitor, callback){
+    User.findById(id, (err, user) => {
+        if(err) throw err
+        //TODO AVOID RESULT 200
+        if(user.visitors.indexOf("visitor") !== -1) callback(Error(), null)
+        else {
+            user.visitors.push(visitor)
+            user.save(callback)
+        }
+    });
+};
+
+module.exports.getVisitors = function(id, callback) {
+    User.findOne({_id: id}).populate("visitors").exec(callback);
+};
+

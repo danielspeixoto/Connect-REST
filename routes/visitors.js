@@ -39,18 +39,6 @@ router.post('/', passport.authenticate('jwt', {session:false}), (req, res, next)
 
 // Get all visitors
 router.get('/', (req, res) => {
-    Visitor.getVisitors(req.query.group, function(err, visitors) {
-        if(err) {
-            console.log(err.message)
-            res.sendStatus(500)
-        } else {
-            res.json(visitors);
-        }
-    });
-});
-
-// Get visitors of a user
-router.get('/', (req, res) => {
     Visitor.getVisitors(req.query, function(err, visitors) {
         if(err) {
             console.log(err.message)
@@ -71,6 +59,18 @@ router.get("/:id/observers", (req, res) => {
         }
     });
 });
+
+router.put("/:id/observers", (req, res) => {
+    Visitor.addObserver(req.params.id, req.body.username, function(err, visitor) {
+        if(err) {
+            console.log(err.message)
+            res.sendStatus(500)
+        } else {
+            res.json(visitor);
+        }
+    });
+});
+
 
 router.put("/:id/isConnected", (req, res) => {
     Visitor.toggleConected(req.params.id, req.body.isConnected, function(err, visitor) {
@@ -93,17 +93,5 @@ router.put("/:id/activities", (req, res) => {
         }
     });
 });
-
-router.put("/:id/observers", (req, res) => {
-    Visitor.addObserver(req.params.id, req.body.username, function(err, visitor) {
-        if(err) {
-            console.log(err.message)
-            res.sendStatus(500)
-        } else {
-            res.json(visitor);
-        }
-    });
-});
-
 
 module.exports = router;
