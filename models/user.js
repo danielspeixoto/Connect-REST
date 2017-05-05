@@ -60,10 +60,6 @@ module.exports.getUsers = function(groupName, callback) {
     User.find({group: groupName}, callback)
 };
 
-module.exports.getUsers = function(id, callback) {
-    User.findOne({_id: id}).populate("visitors").exec(callback)
-};
-
 module.exports.addVisitor = function(id, visitor, callback){
     User.findById(id, (err, user) => {
         if(err) throw err
