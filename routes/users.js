@@ -42,7 +42,6 @@ router.post("/", (req, res, next) => {
 
 // Register worker
 router.post("/:group", (req, res, next) => {
-    console.log(req.body)
     let newUser = new User({
         _id: req.body._id,
         name: req.body.name,

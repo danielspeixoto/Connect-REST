@@ -44,7 +44,7 @@ module.exports.visitorSchema = visitorSchema;
 
 // Get Visitors
 module.exports.getVisitors = function(query, callback) {
-    Visitor.find({$and: [{isConnected: query.isConnected}, {group: query.group}]}, callback)
+    Visitor.find({$and: [{isConnected: query.isConnected}, {group: query.group}]}, callback).sort({ _id : -1})
 };
 
 // Get Visitor
@@ -91,4 +91,8 @@ module.exports.addObserver = function(id, observer, callback){
         visitor.observers.push(observer)
         visitor.save(callback)
     });
+};
+
+module.exports.delete = function(id, callback) {
+    Visitor.remove({ _id: id }, callback);
 };

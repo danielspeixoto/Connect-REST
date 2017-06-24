@@ -94,4 +94,15 @@ router.put("/:id/activities", (req, res) => {
     });
 });
 
+router.put("/:id", (req, res) => {
+    Visitor.delete(req.params.id, function(err) {
+        if(err) {
+            console.log(err.message)
+            res.sendStatus(500)
+        } else {
+            res.json({});
+        }
+    });
+});
+
 module.exports = router;
