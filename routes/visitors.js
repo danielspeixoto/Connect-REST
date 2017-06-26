@@ -10,6 +10,7 @@ const Visitor = require('../models/visitor');
 
 // Register Visitor
 router.post('/', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+    console.log(req.body)
     let newVisitor = new Visitor({
         name: req.body.name,
         observations: req.body.observations,
@@ -38,7 +39,7 @@ router.post('/', passport.authenticate('jwt', {session:false}), (req, res, next)
 });
 
 // Get all visitors
-router.get('/', (req, res) => {
+router.get('/', passport.authenticate('jwt', {session: false}), (req, res) => {
     Visitor.getVisitors(req.query, function(err, visitors) {
         if(err) {
             console.log(err.message)
@@ -49,7 +50,20 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get("/:id/observers", (req, res) => {
+
+router.post('/searches', passport.authenticate('jwt', {session: false}), (req, res) => {
+    console.log(req.body);
+    Visitor.searchVisitors(req.body, function (err, visitors) {
+        if (err) {
+            console.log(err.message)
+            res.sendStatus(500)
+        } else {
+            res.json(visitors);
+        }
+    });
+});
+
+router.get("/:id/observers", passport.authenticate('jwt', {session: false}), (req, res) => {
     Visitor.retrieveObservers(req.params.id, function(err, visitor) {
         if(err) {
             console.log(err.message)
@@ -60,7 +74,7 @@ router.get("/:id/observers", (req, res) => {
     });
 });
 
-router.put("/:id/observers", (req, res) => {
+router.put("/:id/observers", passport.authenticate('jwt', {session: false}), (req, res) => {
     Visitor.addObserver(req.params.id, req.body.username, function(err, visitor) {
         if(err) {
             console.log(err.message)
@@ -72,7 +86,7 @@ router.put("/:id/observers", (req, res) => {
 });
 
 
-router.put("/:id/isConnected", (req, res) => {
+router.put("/:id/isConnected", passport.authenticate('jwt', {session: false}), (req, res) => {
     Visitor.toggleConected(req.params.id, req.body.isConnected, function(err, visitor) {
         if(err) {
             console.log(err.message)
@@ -83,7 +97,7 @@ router.put("/:id/isConnected", (req, res) => {
     });
 });
 
-router.put("/:id/activities", (req, res) => {
+router.put("/:id/activities", passport.authenticate('jwt', {session: false}), (req, res) => {
     Visitor.addActivity(req.params.id, req.body.activity, function(err, visitor) {
         if(err) {
             console.log(err.message)
@@ -94,7 +108,7 @@ router.put("/:id/activities", (req, res) => {
     });
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", passport.authenticate('jwt', {session: false}), (req, res) => {
     Visitor.delete(req.params.id, function(err) {
         if(err) {
             console.log(err.message)

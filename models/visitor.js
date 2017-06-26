@@ -47,6 +47,37 @@ module.exports.getVisitors = function(query, callback) {
     Visitor.find({$and: [{isConnected: query.isConnected}, {group: query.group}]}, callback).sort({ _id : -1})
 };
 
+module.exports.searchVisitors = function (query, callback) {
+
+    let json = {$and: []}
+    if (query.age !== undefined) {
+        json.$and.push({age: new RegExp('^' + query.age + '$', "i")})
+    }
+    if (query.isConnected !== undefined) {
+        json.$and.push({isConnected: new RegExp('^' + query.isConnected + '$', "i")})
+    }
+    if (query.group !== undefined) {
+        json.$and.push({group: new RegExp('^' + query.group + '$', "i")})
+    }
+    if (query.name !== undefined) {
+        json.$and.push({name: new RegExp('^' + query.name + '$', "i")})
+    }
+    if (query.observations !== undefined) {
+        json.$and.push({observations: new RegExp('^' + query.observations + '$', "i")})
+    }
+    if (query.phone !== undefined) {
+        json.$and.push({phone: new RegExp('^' + query.phone + '$', "i")})
+    }
+    if (query.activities !== undefined) {
+        json.$and.push({activities: new RegExp('^' + query.activities + '$', "i")})
+    }
+    if (query.observers !== undefined) {
+        json.$and.push({observers: new RegExp('^' + query.observers + '$', "i")})
+    }
+    console.log(json)
+    Visitor.find(json, callback).sort({_id: -1})
+};
+
 // Get Visitor
 module.exports.getVisitorById = function(id, callback) {
     Visitor.findById(id, callback);
